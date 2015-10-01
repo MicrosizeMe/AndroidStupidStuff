@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">FinanceTesting</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="search">Search</string>
+    <string name="add">Add Cost</string>
+    <string name="cost_hint">Cost</string>
+    <string name="tag_hint">Tags (Separated by comma)</string>
+    <string name="title_activity_entry_lookup_screen">EntryLookupScreen</string>
+    <string name="entry_lookup_instruction_string">Leave as many fields blank as you want.</string>
+    <string name="entry_lookup_tag_hint">Tag (Separate tags by comma)</string>
+    <string name="entry_lookup_cost_range_text">Cost Range</string>
+    <string name="entry_lookup_cost_low_bound">Low Bound</string>
+    <string name="entry_lookup_cost_high_bound">High Bound</string>
+    <string name="entry_lookup_date_range_text">Date Range</string>
+    <string name="title_activity_entry_collection_viewer">EntryCollectionViewer</string>
+    <string name="cost_recording_add_entry_button">Add Entry</string>
+    <string name="entry_lookup_screen_date_lowbound">Low Bound</string>
+    <string name="entry_lookup_screen_cost_highbound">High Bound</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

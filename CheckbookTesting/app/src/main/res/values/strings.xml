@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">CheckbookTesting</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="cost_recording_activity_cost_hint">Cost (Dollars)</string>
+    <string name="cost_recording_activity_add_tag_button_text">Add Tag</string>
+    <string name="cost_recording_activity_date_hint">Date (Defaults to Today)</string>
+    <string name="cost_recording_activity_add_entry_button_text">Add Entry</string>
+    <string name="title_activity_search_entry">SearchEntryActivity</string>
+    <string name="search_entry_activity_enter_cost_range_text">Cost Range</string>
+    <string name="search_entry_activity_cost_low_bound_hint">Low Bound</string>
+    <string name="search_entry_activity_cost_high_bound_hint">High Bound</string>
+    <string name="search_entry_activity_enter_date_range_text">Date Range</string>
+    <string name="search_entry_activity_date_low_bound_hint">Low Bound</string>
+    <string name="search_entry_activity_date_high_bound_hint">High Bound</string>
+    <string name="search_entry_activity_add_search_term_button_text">Add Tag Search Term</string>
+    <string name="tag_entry_or_search_enter_tag_hint">enter tag...</string>
+    <string name="title_activity_entry_collection_view">EntryCollectionViewActivity</string>
+    <string name="entry_collection_view_activity_total_cost_text">Total Cost:</string>
+</resources>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">TodoTesting</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="todo_add_button">Add Task</string>
+    <string name="todo_list_enter_new_hint">Add New Todo Entry</string>
+</resources>

@@ -1,0 +1,41 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".CostRecordingActivity"
+    android:orientation="vertical">
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/cost_recording_activity_cost_hint"
+        android:inputType="numberDecimal"
+        android:id="@+id/cost_recording_activity_cost_edit_view"/>
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="date"
+        android:hint="@string/cost_recording_activity_date_hint"
+        android:id="@+id/cost_recording_activity_date_edit_view"/>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cost_recording_activity_add_tag_button_text"/>
+
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="0px"
+        android:id="@+id/cost_recording_screen_tag_list"
+        android:layout_weight="1">
+
+    </ListView>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cost_recording_activity_add_entry_button_text"
+        android:onClick="addEntry"/>
+
+</LinearLayout>
