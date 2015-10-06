@@ -1,20 +1,46 @@
 package com.example.anbo.checkbooktesting;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.TextView;
+
+import com.example.anbo.checkbooktesting.CheckbookInterface.Checkbook;
 
 import java.util.Calendar;
 
 public class CostRecordingActivity extends Activity {
 
+    CheckbookServiceManager serviceManager = new CheckbookServiceManager();
+    Calendar entryDateReading = roundDate(Calendar.getInstance());
+    Checkbook checkbook;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cost_recording);
+        setDateText(entryDateReading);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, CheckbookService.class);
+        bindService(intent, serviceManager.mConnection, Context.BIND_AUTO_CREATE);
+        checkbook = serviceManager.service;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (serviceManager.isBound) {
+            unbindService(serviceManager.mConnection);
+        }
     }
 
     @Override
@@ -40,44 +66,37 @@ public class CostRecordingActivity extends Activity {
     }
 
     public void addEntry(View view) {
-        EditText costText = (EditText) findViewById(R.id.cost_recording_activity_cost_edit_view);
-        double cost = Double.parseDouble(costText.getText().toString().trim());
-        EditText dateText = (EditText) findViewById(R.id.cost_recording_activity_date_edit_view);
-        String dateString = dateText.getText().toString();
+        ((CheckbookService) checkbook).showToast();
+    }
 
-        Calendar date = Calendar.getInstance();
+    public void showDatePickerDialog (View view){
+        DialogFragment fragment = new DatePickerFragment();
+        fragment.show(getFragmentManager(), "datePicker");
+    }
 
+    public void setDateText(Calendar date) {
+        TextView textView = (TextView) findViewById(R.id.cost_recording_activity_date_text_view);
+        textView.setText(getStringFromCalendar(date));
+    }
+
+    public void setDate (int year, int month, int day){
+        entryDateReading.set(Calendar.YEAR, year);
+        entryDateReading.set(Calendar.MONTH, month);
+        entryDateReading.set(Calendar.DAY_OF_MONTH, day);
+        setDateText(entryDateReading);
+    }
+
+    public static Calendar roundDate(Calendar date) {
         date.set(Calendar.MILLISECOND, 0);
         date.set(Calendar.SECOND, 0);
         date.set(Calendar.MINUTE, 0);
         date.set(Calendar.HOUR_OF_DAY, 0);
-
-        if (dateString != ""){
-            String fragment = "";
-            char[] dateArray = dateString.toCharArray();
-
-            //Month
-            int count = processNextFragment(dateArray, 0, date, Calendar.MONTH);
-
-            //Day
-            count = processNextFragment(dateArray, count, date, Calendar.DAY_OF_MONTH);
-
-            //Year
-            processNextFragment(dateArray, count, date, Calendar.YEAR);
-        }
+        return date;
     }
 
-    private int processNextFragment(char[] dateArray, int count, Calendar date, int calendarParem) {
-        String fragment = "";
-        for (int i = count; i < dateArray.length; i++) {
-            if (Character.isDigit(dateArray[i]))
-                fragment += dateArray[i];
-            else {
-                date.set(calendarParem, Integer.parseInt(fragment));
-                return i + 1; //Skip the encoding symbol we're currently on
-            }
-        }
-        date.set(calendarParem, Integer.parseInt(fragment));
-        return dateArray.length;
+    public static String getStringFromCalendar(Calendar date){
+        return (date.get(Calendar.MONTH) + 1) + "."
+                + date.get(Calendar.DAY_OF_MONTH) + "."
+                + date.get(Calendar.YEAR);
     }
 }

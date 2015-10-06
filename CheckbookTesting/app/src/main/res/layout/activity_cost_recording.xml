@@ -12,12 +12,23 @@
         android:hint="@string/cost_recording_activity_cost_hint"
         android:inputType="numberDecimal"
         android:id="@+id/cost_recording_activity_cost_edit_view"/>
-    <EditText
+
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:inputType="date"
-        android:hint="@string/cost_recording_activity_date_hint"
-        android:id="@+id/cost_recording_activity_date_edit_view"/>
+        android:orientation="horizontal">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_calendar_black"
+            android:onClick="showDatePickerDialog"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/cost_recording_activity_date_text_view"
+            android:layout_gravity="center_vertical"/>
+    </LinearLayout>
 
     <Button
         android:layout_width="fill_parent"

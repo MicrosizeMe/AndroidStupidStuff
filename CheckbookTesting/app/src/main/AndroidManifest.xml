@@ -24,6 +24,12 @@
             android:name=".EntryCollectionViewActivity"
             android:label="@string/title_activity_entry_collection_view" >
         </activity>
+
+        <service
+            android:name=".CheckbookService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
