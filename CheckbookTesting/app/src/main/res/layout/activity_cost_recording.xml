@@ -43,6 +43,12 @@
 
     </ListView>
 
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/cost_recording_activity_note_edit_view"
+        android:id="@+id/cost_recording_screen_note_edit_view"/>
+
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

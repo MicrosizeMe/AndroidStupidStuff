@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
+import com.example.anbo.checkbooktesting.SqlDBInteractions.CheckbookService;
+
 /**
  * Created by Anbo on 10/4/2015.
  */

@@ -18,4 +18,5 @@
     <string name="tag_entry_or_search_enter_tag_hint">enter tag...</string>
     <string name="title_activity_entry_collection_view">EntryCollectionViewActivity</string>
     <string name="entry_collection_view_activity_total_cost_text">Total Cost:</string>
+    <string name="cost_recording_activity_note_edit_view">Notes (Optional)</string>
 </resources>

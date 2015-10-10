@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.anbo.checkbooktesting.CheckbookInterface.Checkbook;
+import com.example.anbo.checkbooktesting.SqlDBInteractions.CheckbookService;
 
 import java.util.Calendar;
 
@@ -18,7 +18,7 @@ public class CostRecordingActivity extends Activity {
 
     CheckbookServiceManager serviceManager = new CheckbookServiceManager();
     Calendar entryDateReading = roundDate(Calendar.getInstance());
-    Checkbook checkbook;
+    CheckbookService checkbook;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
