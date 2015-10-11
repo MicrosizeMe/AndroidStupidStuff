@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,10 +67,16 @@ public class CostRecordingActivity extends Activity {
 
     public void addEntry(View view) {
         //checkbook.showToast();
-        String valid = Boolean.toString(serviceManager.service == null);
-        Toast toast = Toast.makeText(this, valid, Toast.LENGTH_SHORT);
+        double cost =
+                Double.parseDouble(
+                        ((EditText) findViewById(R.id.cost_recording_activity_cost_edit_view))
+                                .getText().toString().trim()
+                );
+        cost = Math.floor(cost * 100) / 100;
+        //String valid = Boolean.toString(serviceManager.service == null);
+        Toast toast = Toast.makeText(this, "" + cost, Toast.LENGTH_SHORT);
         toast.show();
-        serviceManager.service.showToast();
+
     }
 
     public void showDatePickerDialog (View view){
