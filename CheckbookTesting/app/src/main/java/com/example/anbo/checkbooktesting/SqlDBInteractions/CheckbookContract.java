@@ -1,7 +1,5 @@
 package com.example.anbo.checkbooktesting.SqlDBInteractions;
 
-import java.util.List;
-
 /**
  * Created by Anbo on 10/5/2015.
  */
@@ -31,8 +29,8 @@ public class CheckbookContract {
         public final static String TABLE_NAME = "entryTable";
         public final static String UUID = "entryUUID";
         public final static int UUID_COLUMN_INDEX = 0;
-        public final static String DATE_COLUMN_NAME = "entryDateID";
-        public final static int DATE_COLUMN_INDEX = 1;
+        public final static String DATE_UUID_COLUMN_NAME = "entryDateID";
+        public final static int DATE_UUID_COLUMN_INDEX = 1;
         public final static String COST_COLUMN_NAME = "entryCost";
         public final static int COST_COLUMN_INDEX = 2;
         //Tags
@@ -41,8 +39,8 @@ public class CheckbookContract {
         public final static String CREATE_TABLE = "CREATE TABLE "
                 + TABLE_NAME
                 + " ("
-                + UUID + " INTEGER PRIMARY KEY, "
-                + DATE_COLUMN_NAME + " INTEGER, " //" INTEGER FOREIGN KEY, "
+                + UUID + " TEXT PRIMARY KEY, "
+                + DATE_UUID_COLUMN_NAME + " TEXT, " //" INTEGER FOREIGN KEY, "
                 + COST_COLUMN_NAME + " REAL, "
                 + NOTE_COLUMN_NAME + " TEXT);";
         public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME + ";";
@@ -59,7 +57,7 @@ public class CheckbookContract {
         public final static String CREATE_TABLE = "CREATE TABLE "
                 + TABLE_NAME
                 + " ("
-                + UUID + " INTEGER PRIMARY KEY, "
+                + UUID + " TEXT PRIMARY KEY, "
                 + NAME_COLUMN_NAME + " TEXT);";
         public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME + ";";
     }
@@ -74,36 +72,36 @@ public class CheckbookContract {
         public final static String CREATE_TABLE = "CREATE TABLE "
                 + TABLE_NAME
                 + " ("
-                + UUID + " INTEGER PRIMARY KEY, "
+                + UUID + " TEXT PRIMARY KEY, "
                 + DATE_COLUMN_NAME + " TEXT);";
         public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME + ";";
     }
 
     public abstract static class ENTRY_TO_TAG {
         public final static String TABLE_NAME = "entryToTagTable";
-        public final static String ENTRY_COLUMN_NAME = "entryToTagEntry";
-        public final static int ENTRY_COLUMN_INDEX = 0;
-        public final static String   TAG_COLUMN_NAME = "entryToTagTag";
-        public final static int TAG_COLUMN_INDEX = 1;
+        public final static String ENTRY_UUID_COLUMN_NAME = "entryToTagEntry";
+        public final static int ENTRY_UUID_COLUMN_INDEX = 0;
+        public final static String TAG_UUID_COLUMN_NAME = "entryToTagTag";
+        public final static int TAG_UUID_COLUMN_INDEX = 1;
 
         public final static String CREATE_TABLE = "CREATE TABLE "
                 + TABLE_NAME
                 + " ("
-                + ENTRY_COLUMN_NAME + " INTEGER, "//" INTEGER FOREIGN KEY, "
-                + TAG_COLUMN_NAME + " INTEGER);";//" INTEGER FOREIGN KEY);";
+                + ENTRY_UUID_COLUMN_NAME + " TEXT, "//" INTEGER FOREIGN KEY, "
+                + TAG_UUID_COLUMN_NAME + " TEXT);";//" INTEGER FOREIGN KEY);";
         public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME + ";";
     }
 
     /*public abstract static class ENTRY_TO_DATE {
         public final static String TABLE_NAME = "entryToDateTable";
         public final static String ENTRY_COLUMN_NAME = "entryToDateEntry";
-        public final static String  DATE_COLUMN_NAME = "entryToDateDate";
+        public final static String  DATE_UUID_COLUMN_NAME = "entryToDateDate";
 
         public final static String CREATE_TABLE = "CREATE TABLE "
                 + TABLE_NAME
                 + " ("
                 + ENTRY_COLUMN_NAME + " INTEGER FOREIGN KEY, "
-                + DATE_COLUMN_NAME + " INTEGER FOREIGN KEY);";
+                + DATE_UUID_COLUMN_NAME + " INTEGER FOREIGN KEY);";
         public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME + ";";
     }*/
 
@@ -117,8 +115,8 @@ public class CheckbookContract {
         public final static String CREATE_TABLE = "CREATE TABLE "
                 + TABLE_NAME
                 + " ("
-                + TAG + " INTEGER, "//" INTEGER FOREIGN KEY, "
-                + TAG_IMPLIES + " INTEGER);";//" INTEGER FOREIGN KEY);";
+                + TAG + " TEXT, "//" INTEGER FOREIGN KEY, "
+                + TAG_IMPLIES + " TEXT);";//" INTEGER FOREIGN KEY);";
         public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME + ";";
     }
 }
