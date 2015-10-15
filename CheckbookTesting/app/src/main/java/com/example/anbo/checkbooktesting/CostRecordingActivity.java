@@ -8,11 +8,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.anbo.checkbooktesting.sqlDBInteractions.CheckbookContract;
 import com.example.anbo.checkbooktesting.sqlDBInteractions.CheckbookService;
 import com.example.anbo.checkbooktesting.subcomponents.DatePickerFragment;
+import com.example.anbo.checkbooktesting.subcomponents.TagListAdapter;
 
 import java.util.Calendar;
 
@@ -20,13 +23,14 @@ public class CostRecordingActivity extends Activity {
 
     CheckbookServiceManager serviceManager = new CheckbookServiceManager();
     Calendar entryDateReading = StaticUtil.roundDate(Calendar.getInstance());
+    TagListAdapter adapter;
+    boolean adapterInitialized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cost_recording);
         setDateText(entryDateReading);
-
     }
 
     @Override
@@ -34,6 +38,7 @@ public class CostRecordingActivity extends Activity {
         super.onStart();
         Intent intent = new Intent(this, CheckbookService.class);
         bindService(intent, serviceManager.mConnection, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
@@ -78,6 +83,16 @@ public class CostRecordingActivity extends Activity {
         //String valid = Boolean.toString(serviceManager.service == null);
         Toast toast = Toast.makeText(this, "" + cost, Toast.LENGTH_LONG);
         toast.show();
+    }
+
+    public void addTag(View view) {
+        if (!adapterInitialized){
+            //TODO Figure out how this is actually supposed to work
+            adapter = new TagListAdapter(this, serviceManager.service.getTagList());
+            ((ListView) findViewById(R.id.cost_recording_screen_tag_list)).setAdapter(adapter);
+            adapterInitialized = true;
+        }
+        adapter.addBox();
     }
 
     public void showDatePickerDialog (View view){

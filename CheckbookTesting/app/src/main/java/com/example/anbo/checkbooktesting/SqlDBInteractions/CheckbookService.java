@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public class CheckbookService extends Service {
 
-    private SQLiteDatabase db;
+    public SQLiteDatabase db;
     private boolean tagListUpToDate = false;
     private List<String> tagList = new ArrayList<>();
 
@@ -31,8 +31,11 @@ public class CheckbookService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        if (db == null)
-            db = (new CheckbookSqlHelper(this)).getWritableDatabase();
+        if (db == null){
+            CheckbookSqlHelper helper = new CheckbookSqlHelper(this);
+            db = helper.getWritableDatabase();
+            helper.resetDb(db);
+        }
         return binder;
     }
 
@@ -121,6 +124,7 @@ public class CheckbookService extends Service {
                 null,
                 values
         );
+        showToast();
         return dateUUID;
     }
 

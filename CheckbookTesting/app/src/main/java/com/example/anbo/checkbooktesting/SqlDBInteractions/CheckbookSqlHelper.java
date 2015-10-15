@@ -14,11 +14,16 @@ public class CheckbookSqlHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CheckbookContract.CREATE_ALL_TABLES);
+        db.execSQL(CheckbookContract.DATE.CREATE_TABLE);
+        assert (true);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    }
 
+    public void resetDb(SQLiteDatabase db) {
+        CheckbookContract.dropAllTables(db);
+        CheckbookContract.createAllTables(db);
     }
 }

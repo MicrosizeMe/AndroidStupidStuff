@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by Anbo on 10/9/2015.
+ * Created by Anbo on 10/14/2015.
  */
 public interface Entry {
     UUID getUUID();
@@ -17,5 +17,4 @@ public interface Entry {
     List<String> getTags();
 
     String getNote();
-
 }

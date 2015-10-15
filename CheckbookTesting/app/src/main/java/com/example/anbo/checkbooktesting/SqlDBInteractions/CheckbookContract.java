@@ -1,5 +1,7 @@
 package com.example.anbo.checkbooktesting.sqlDBInteractions;
 
+import android.database.sqlite.SQLiteDatabase;
+
 /**
  * Created by Anbo on 10/5/2015.
  */
@@ -8,22 +10,21 @@ public class CheckbookContract {
     public final static String DATABASE_NAME = "checkbookContract.db";
     public final static int DATABASE_VERSION = 1;
 
-    public final static String CREATE_ALL_TABLES =
-            ENTRY.CREATE_TABLE + " "
-            + TAG.CREATE_TABLE + " "
-            + DATE.CREATE_TABLE + " "
-            //+ ENTRY_TO_DATE.CREATE_TABLE + " "
-            + ENTRY_TO_TAG.CREATE_TABLE + " "
-            + TAG_RULES.CREATE_TABLE;
-    public final static String DELETE_ALL_TABLES =
-            ENTRY.DROP_TABLE + " "
-            + TAG.DROP_TABLE + " "
-            + DATE.DROP_TABLE + " "
-            //+ ENTRY_TO_DATE.DROP_TABLE + " "
-            + ENTRY_TO_TAG.DROP_TABLE + " "
-            + TAG_RULES.DROP_TABLE;
+    public static void createAllTables(SQLiteDatabase db){
+        db.execSQL(ENTRY.CREATE_TABLE);
+        db.execSQL(TAG.CREATE_TABLE);
+        db.execSQL(DATE.CREATE_TABLE);
+        db.execSQL(ENTRY_TO_TAG.CREATE_TABLE);
+        db.execSQL(TAG_RULES.CREATE_TABLE);
+    }
 
-
+    public static void dropAllTables(SQLiteDatabase db){
+        db.execSQL(ENTRY.DROP_TABLE);
+        db.execSQL(TAG.DROP_TABLE);
+        db.execSQL(DATE.DROP_TABLE);
+        db.execSQL(ENTRY_TO_TAG.DROP_TABLE);
+        db.execSQL(TAG_RULES.DROP_TABLE);
+    }
 
     public abstract static class ENTRY {
         public final static String TABLE_NAME = "entryTable";
