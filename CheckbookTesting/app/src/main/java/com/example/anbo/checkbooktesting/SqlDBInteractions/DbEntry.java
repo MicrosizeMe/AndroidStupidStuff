@@ -1,8 +1,8 @@
-package com.example.anbo.checkbooktesting.SqlDBInteractions;
+package com.example.anbo.checkbooktesting.sqlDBInteractions;
 
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.anbo.checkbooktesting.CheckbookInterface.Entry;
+import com.example.anbo.checkbooktesting.checkbookInterface.Entry;
 
 import java.util.Calendar;
 import java.util.List;

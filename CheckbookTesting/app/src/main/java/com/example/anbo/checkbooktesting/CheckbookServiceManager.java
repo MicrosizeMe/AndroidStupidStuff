@@ -1,12 +1,10 @@
 package com.example.anbo.checkbooktesting;
 
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.widget.Toast;
 
-import com.example.anbo.checkbooktesting.SqlDBInteractions.CheckbookService;
+import com.example.anbo.checkbooktesting.sqlDBInteractions.CheckbookService;
 
 /**
  * Created by Anbo on 10/4/2015.

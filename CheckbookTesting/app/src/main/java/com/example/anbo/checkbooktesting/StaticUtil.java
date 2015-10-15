@@ -20,4 +20,8 @@ public class StaticUtil {
                 + date.get(Calendar.DAY_OF_MONTH) + "."
                 + date.get(Calendar.YEAR);
     }
+
+    public static long getMinutesSinceEpoch(Calendar date) {
+        return (int) Math.floor((double)(date.getTimeInMillis()) / 60000.0);
+    }
 }

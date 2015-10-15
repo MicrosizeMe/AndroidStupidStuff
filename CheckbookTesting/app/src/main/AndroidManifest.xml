@@ -26,7 +26,7 @@
         </activity>
 
         <service
-            android:name=".SqlDBInteractions.CheckbookService"
+            android:name=".sqlDBInteractions.CheckbookService"
             android:enabled="true"
             android:exported="false" >
         </service>

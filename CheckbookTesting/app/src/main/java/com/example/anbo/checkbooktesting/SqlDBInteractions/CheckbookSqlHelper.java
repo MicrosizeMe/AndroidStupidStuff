@@ -1,4 +1,4 @@
-package com.example.anbo.checkbooktesting.SqlDBInteractions;
+package com.example.anbo.checkbooktesting.sqlDBInteractions;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

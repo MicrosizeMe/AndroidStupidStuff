@@ -8,11 +8,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.anbo.checkbooktesting.SqlDBInteractions.CheckbookService;
+import com.example.anbo.checkbooktesting.sqlDBInteractions.CheckbookService;
+import com.example.anbo.checkbooktesting.subcomponents.DatePickerFragment;
 
 import java.util.Calendar;
 
@@ -26,6 +26,7 @@ public class CostRecordingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cost_recording);
         setDateText(entryDateReading);
+
     }
 
     @Override
@@ -67,16 +68,16 @@ public class CostRecordingActivity extends Activity {
 
     public void addEntry(View view) {
         //checkbook.showToast();
-        double cost =
+        /*double cost =
                 Double.parseDouble(
                         ((EditText) findViewById(R.id.cost_recording_activity_cost_edit_view))
                                 .getText().toString().trim()
                 );
-        cost = Math.floor(cost * 100) / 100;
+        //cost = Math.floor(cost * 100) / 100;*/
+        long cost = StaticUtil.getMinutesSinceEpoch(entryDateReading);
         //String valid = Boolean.toString(serviceManager.service == null);
-        Toast toast = Toast.makeText(this, "" + cost, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(this, "" + cost, Toast.LENGTH_LONG);
         toast.show();
-
     }
 
     public void showDatePickerDialog (View view){
@@ -94,5 +95,9 @@ public class CostRecordingActivity extends Activity {
         entryDateReading.set(Calendar.MONTH, month);
         entryDateReading.set(Calendar.DAY_OF_MONTH, day);
         setDateText(entryDateReading);
+    }
+
+    public Calendar getEntryDateReading(){
+        return entryDateReading;
     }
 }

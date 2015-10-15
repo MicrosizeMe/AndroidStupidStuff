@@ -1,4 +1,4 @@
-package com.example.anbo.checkbooktesting.SqlDBInteractions;
+package com.example.anbo.checkbooktesting.sqlDBInteractions;
 
 import android.app.Service;
 import android.content.ContentValues;
@@ -11,13 +11,16 @@ import android.widget.Toast;
 
 import com.example.anbo.checkbooktesting.StaticUtil;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
 public class CheckbookService extends Service {
 
-    SQLiteDatabase db;
+    private SQLiteDatabase db;
+    private boolean tagListUpToDate = false;
+    private List<String> tagList = new ArrayList<>();
 
     private CheckbookBinder binder = new CheckbookBinder();
     public class CheckbookBinder extends Binder{
@@ -28,8 +31,8 @@ public class CheckbookService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        //if (db == null)
-            //db = (new CheckbookSqlHelper(this)).getWritableDatabase();
+        if (db == null)
+            db = (new CheckbookSqlHelper(this)).getWritableDatabase();
         return binder;
     }
 
@@ -39,22 +42,33 @@ public class CheckbookService extends Service {
         toast.show();
     }
 
+    public String[] getTagList(){
+        if (!tagListUpToDate) updateTagList();
+        String[] returnArray = new String[tagList.size()];
+        return tagList.toArray(returnArray);
+    }
+
+    private void updateTagList(){
+        if (!tagListUpToDate){
+            Cursor tagQuery = db.query(
+                    false,
+                    CheckbookContract.TAG.TABLE_NAME,
+                    new String[]{CheckbookContract.TAG.NAME_COLUMN_NAME},
+                    null, null, null, null, null, null
+            );
+            tagList = new ArrayList<>();
+            int count = tagQuery.getCount();
+            for (int i = 0; i < count; i++) {
+                tagList.add(tagQuery.getString(0));
+            }
+            tagListUpToDate = true;
+        }
+    }
+
     public UUID createEntry(Calendar date, double cost, List<String> tags, String note){
         //Get date ID
-        Cursor dateQuery = db.query(
-                true,
-                CheckbookContract.DATE.TABLE_NAME,
-                new String[]{CheckbookContract.DATE.UUID, CheckbookContract.DATE.DATE_COLUMN_NAME},
-                "WHERE " + CheckbookContract.DATE.DATE_COLUMN_NAME
-                        + " = " + StaticUtil.getStringFromCalendar(date),
-                null, null, null, null, null);
-        UUID dateUUID;
-        if (dateQuery.getCount() == 0){
-            dateUUID = createDate(date);
-        }
-        else dateUUID =
-                UUID.fromString(dateQuery.getString(0));
-        dateQuery.close();
+        UUID dateUUID = getDateByCalendar(date);
+        if (dateUUID == null) dateUUID = createDate(date);
 
         //Add the entry
         UUID entryUUID = UUID.randomUUID();
@@ -92,6 +106,7 @@ public class CheckbookService extends Service {
                 null,
                 values
         );
+        tagListUpToDate = false;
         return tagUUID;
     }
 
@@ -100,7 +115,7 @@ public class CheckbookService extends Service {
         ContentValues values = new ContentValues(2);
         values.put(CheckbookContract.DATE.UUID, dateUUID.toString());
         values.put(CheckbookContract.DATE.DATE_COLUMN_NAME,
-                StaticUtil.getStringFromCalendar(date));
+                StaticUtil.getMinutesSinceEpoch(date));
         db.insert(
                 CheckbookContract.DATE.TABLE_NAME,
                 null,
@@ -168,5 +183,22 @@ public class CheckbookService extends Service {
         UUID returnUUID = UUID.fromString(tagQuery.getString(0));
         tagQuery.close();
         return returnUUID;
+    }
+
+    private UUID getDateByCalendar (Calendar date) {
+        Cursor dateQuery = db.query(
+                true,
+                CheckbookContract.DATE.TABLE_NAME,
+                new String[]{CheckbookContract.DATE.UUID, CheckbookContract.DATE.DATE_COLUMN_NAME},
+                "WHERE " + CheckbookContract.DATE.DATE_COLUMN_NAME
+                        + " = " + StaticUtil.getMinutesSinceEpoch(date),
+                null, null, null, null, null);
+        if (dateQuery.getCount() == 0){
+            dateQuery.close();
+            return null;
+        }
+        UUID dateUUID = UUID.fromString(dateQuery.getString(0));
+        dateQuery.close();
+        return dateUUID;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.anbo.checkbooktesting.SqlDBInteractions;
+package com.example.anbo.checkbooktesting.sqlDBInteractions;
 
 /**
  * Created by Anbo on 10/5/2015.
@@ -73,7 +73,7 @@ public class CheckbookContract {
                 + TABLE_NAME
                 + " ("
                 + UUID + " TEXT PRIMARY KEY, "
-                + DATE_COLUMN_NAME + " TEXT);";
+                + DATE_COLUMN_NAME + " INTEGER);";
         public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME + ";";
     }
 

@@ -7,11 +7,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_delete_icon"
+        android:id="@+id/tag_entry_or_search_delete_button"
         />
 
     <AutoCompleteTextView
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:hint="@string/tag_entry_or_search_enter_tag_hint"/>
+        android:hint="@string/tag_entry_or_search_enter_tag_hint"
+        android:id="@+id/tag_entry_or_search_text_view"/>
 
 </LinearLayout>
