@@ -1,5 +1,6 @@
 package com.example.anbo.checkbooktesting.subcomponents;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -14,6 +15,24 @@ import java.util.Calendar;
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
+    public interface DatePickerDialogueListener{
+        void setDate(int year, int month, int day);
+    }
+
+    DatePickerDialogueListener activity;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            this.activity = (DatePickerDialogueListener) activity;
+        }
+        catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + "must implement DatePickerDialogueListener");
+        }
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker
@@ -27,6 +46,6 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        ((CostRecordingActivity) getActivity()).setDate(year, month, day);
+        activity.setDate(year, month, day);
     }
 }

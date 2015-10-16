@@ -8,29 +8,37 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.anbo.checkbooktesting.checkbookInterface.Entry;
 import com.example.anbo.checkbooktesting.sqlDBInteractions.CheckbookContract;
 import com.example.anbo.checkbooktesting.sqlDBInteractions.CheckbookService;
+import com.example.anbo.checkbooktesting.subcomponents.AddTagFragment;
 import com.example.anbo.checkbooktesting.subcomponents.DatePickerFragment;
 import com.example.anbo.checkbooktesting.subcomponents.TagListAdapter;
 
+import java.lang.reflect.Array;
 import java.util.Calendar;
 
-public class CostRecordingActivity extends Activity {
+public class CostRecordingActivity extends Activity
+implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagFragmentListener{
 
     CheckbookServiceManager serviceManager = new CheckbookServiceManager();
     Calendar entryDateReading = StaticUtil.roundDate(Calendar.getInstance());
     TagListAdapter adapter;
-    boolean adapterInitialized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cost_recording);
         setDateText(entryDateReading);
+        adapter = new TagListAdapter(this);
+        ((ListView) findViewById(R.id.cost_recording_screen_tag_list)).setAdapter(
+                adapter);
     }
 
     @Override
@@ -72,27 +80,28 @@ public class CostRecordingActivity extends Activity {
     }
 
     public void addEntry(View view) {
-        //checkbook.showToast();
-        /*double cost =
-                Double.parseDouble(
-                        ((EditText) findViewById(R.id.cost_recording_activity_cost_edit_view))
-                                .getText().toString().trim()
-                );
-        //cost = Math.floor(cost * 100) / 100;*/
-        long cost = StaticUtil.getMinutesSinceEpoch(entryDateReading);
-        //String valid = Boolean.toString(serviceManager.service == null);
-        Toast toast = Toast.makeText(this, "" + cost, Toast.LENGTH_LONG);
+        EditText costView = (EditText) findViewById(R.id.cost_recording_activity_cost_edit_view);
+        double cost = Double.parseDouble(costView.getText().toString());
+        EditText noteView = (EditText) findViewById(R.id.cost_recording_screen_note_edit_view);
+        String note = noteView.getText().toString();
+        serviceManager.service.createEntry(entryDateReading, cost, adapter.getAllStrings(), note);
+        Toast toast = Toast.makeText(this, "!!?!?!" + cost, Toast.LENGTH_LONG);
         toast.show();
     }
 
-    public void addTag(View view) {
-        if (!adapterInitialized){
-            //TODO Figure out how this is actually supposed to work
-            adapter = new TagListAdapter(this, serviceManager.service.getTagList());
-            ((ListView) findViewById(R.id.cost_recording_screen_tag_list)).setAdapter(adapter);
-            adapterInitialized = true;
-        }
-        adapter.addBox();
+    @Override
+    public String[] getTagStrings() {
+        return serviceManager.service.getTagList();
+    }
+
+    @Override
+    public void receiveString(String string) {
+        adapter.add(string);
+    }
+
+    public void showTagEntryDialog(View view) {
+        DialogFragment fragment = new AddTagFragment();
+        fragment.show(getFragmentManager(), "tagAdder");
     }
 
     public void showDatePickerDialog (View view){

@@ -80,8 +80,8 @@ public class CheckbookService extends Service {
         ContentValues values = new ContentValues();
         values.put(CheckbookContract.ENTRY.UUID, entryUUIDString);
         values.put(CheckbookContract.ENTRY.DATE_UUID_COLUMN_NAME, dateUUID.toString());
-        values.put(CheckbookContract.ENTRY.COST_COLUMN_NAME, cost);
-        values.put(CheckbookContract.ENTRY.NOTE_COLUMN_NAME, note);
+        values.put(CheckbookContract.ENTRY.COST_COLUMN_NAME, Math.floor(cost * 100) / 100);
+        values.put(CheckbookContract.ENTRY.NOTE_COLUMN_NAME, note.trim());
         db.insert(
                 CheckbookContract.ENTRY.TABLE_NAME,
                 null,
@@ -100,7 +100,9 @@ public class CheckbookService extends Service {
     }
 
     public UUID createTag(String name) {
-        UUID tagUUID = UUID.randomUUID();
+        UUID tagUUID = getTagByName(name);
+        if (tagUUID != null) return tagUUID;
+        tagUUID = UUID.randomUUID();
         ContentValues values = new ContentValues(2);
         values.put(CheckbookContract.TAG.UUID, tagUUID.toString());
         values.put(CheckbookContract.TAG.NAME_COLUMN_NAME, name);
@@ -114,7 +116,9 @@ public class CheckbookService extends Service {
     }
 
     public UUID createDate(Calendar date) {
-        UUID dateUUID = UUID.randomUUID();
+        UUID dateUUID = getDateByCalendar(date);
+        if (dateUUID != null) return dateUUID;
+        dateUUID = UUID.randomUUID();
         ContentValues values = new ContentValues(2);
         values.put(CheckbookContract.DATE.UUID, dateUUID.toString());
         values.put(CheckbookContract.DATE.DATE_COLUMN_NAME,
@@ -159,6 +163,7 @@ public class CheckbookService extends Service {
     }
 
     public void createImplicitTagRelationship(String tag, String tagImplies) {
+        //TODO make sure that we don't add duplicates
         UUID tagID = getTagByName(tag);
         if (tagID == null)
             tagID = createTag(tag);

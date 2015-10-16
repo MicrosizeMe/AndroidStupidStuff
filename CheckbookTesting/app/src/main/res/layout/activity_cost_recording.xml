@@ -34,13 +34,14 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/cost_recording_activity_add_tag_button_text"
-        android:onClick="addTag"/>
+        android:onClick="showTagEntryDialog"/>
 
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="0px"
         android:id="@+id/cost_recording_screen_tag_list"
         android:layout_weight="1"
+        android:descendantFocusability="afterDescendants"
         >
 
     </ListView>
