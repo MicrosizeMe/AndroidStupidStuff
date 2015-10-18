@@ -48,12 +48,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_calendar_black"
-                android:onClick="showDatePickerDialog"/>
+                android:onClick="showDatePickerDialog"
+                android:id="@+id/search_entry_activity_date_low_bound_button"/>
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/search_entry_activity_date_low_bound_text_view"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                android:text="@string/search_entry_activity_date_low_bound_hint"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0px"
@@ -64,19 +66,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_calendar_black"
-                android:onClick="showDatePickerDialog"/>
+                android:onClick="showDatePickerDialog"
+                android:id="@+id/search_entry_activity_date_high_bound_button"/>
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/search_entry_activity_date_high_bound_text_view"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                android:text="@string/search_entry_activity_date_high_bound_hint"/>
         </LinearLayout>
     </LinearLayout>
 
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/search_entry_activity_add_search_term_button_text"/>
+        android:text="@string/search_entry_activity_add_search_term_button_text"
+        android:onClick="showTagEntryDialog"/>
 
     <ListView
         android:layout_width="fill_parent"
@@ -89,6 +94,7 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/search_entry_activity_search_button_text"/>
+        android:text="@string/search_entry_activity_search_button_text"
+        android:onClick="search"/>
 
 </LinearLayout>

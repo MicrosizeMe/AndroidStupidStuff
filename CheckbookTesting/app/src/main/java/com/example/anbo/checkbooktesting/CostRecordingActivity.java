@@ -1,27 +1,18 @@
 package com.example.anbo.checkbooktesting;
 
-import android.app.Activity;
 import android.app.DialogFragment;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.anbo.checkbooktesting.checkbookInterface.Entry;
-import com.example.anbo.checkbooktesting.sqlDBInteractions.CheckbookContract;
-import com.example.anbo.checkbooktesting.sqlDBInteractions.CheckbookService;
 import com.example.anbo.checkbooktesting.subcomponents.AddTagFragment;
 import com.example.anbo.checkbooktesting.subcomponents.DatePickerFragment;
 import com.example.anbo.checkbooktesting.subcomponents.TagListAdapter;
 
-import java.lang.reflect.Array;
 import java.util.Calendar;
 import java.util.List;
 
@@ -108,7 +99,7 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
         setDateText(entryDateReading);
     }
 
-    public Calendar getEntryDateReading(){
+    public Calendar getEntryDateReading(boolean isLower){
         return entryDateReading;
     }
 }

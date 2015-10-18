@@ -19,7 +19,8 @@
         </activity>
         <activity
             android:name=".SearchEntryActivity"
-            android:label="@string/title_activity_search_entry" >
+            android:label="@string/title_activity_search_entry"
+            android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
             android:name=".EntryCollectionViewActivity"

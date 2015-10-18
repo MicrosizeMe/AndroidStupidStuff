@@ -61,10 +61,13 @@ public class CheckbookService extends Service {
             );
             tagList = new ArrayList<>();
             int count = tagQuery.getCount();
+            if (count != 0) tagQuery.moveToFirst();
             for (int i = 0; i < count; i++) {
                 tagList.add(tagQuery.getString(0));
+                tagQuery.moveToNext();
             }
             tagListUpToDate = true;
+            tagQuery.close();
         }
     }
 
@@ -154,6 +157,7 @@ public class CheckbookService extends Service {
         );
 
         int count = implicitRules.getCount();
+        if (count != 0) implicitRules.moveToFirst();
         for (int i = 0; i < count; i++) {
             UUID implicitTag = UUID.fromString(implicitRules.getString(1));
             createEntryTagRelationship(entryUUID, implicitTag);
@@ -202,6 +206,7 @@ public class CheckbookService extends Service {
             tagQuery.close();
             return null;
         }
+        tagQuery.moveToFirst();
         UUID returnUUID = UUID.fromString(tagQuery.getString(0));
         tagQuery.close();
         return returnUUID;
@@ -219,6 +224,7 @@ public class CheckbookService extends Service {
             dateQuery.close();
             return null;
         }
+        dateQuery.moveToFirst();
         UUID dateUUID = UUID.fromString(dateQuery.getString(0));
         dateQuery.close();
         return dateUUID;
