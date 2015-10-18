@@ -47,6 +47,8 @@ public class AddTagFragment extends DialogFragment {
 
         final AutoCompleteTextView textView = new AutoCompleteTextView(getActivity());
         textView.setAdapter(new ArrayAdapter<>(getActivity(), -1, activity.getTagStrings()));
+        textView.setHint(R.string.tag_entry_or_search_enter_tag_hint);
+        textView.requestFocus();
         builder.setView(textView);
 
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {

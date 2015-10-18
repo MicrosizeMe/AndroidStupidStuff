@@ -1,6 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.anbo.checkbooktesting.EntryCollectionViewActivity">
+    <item android:id="@+id/action_add_entry" android:title="@string/menu_add_entry_text"
+        android:icon="@drawable/ic_add" android:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_search" android:title = "@string/menu_search_text"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_search_glass"/>
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" android:showAsAction="never" />
 </menu>

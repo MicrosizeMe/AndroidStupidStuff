@@ -23,11 +23,11 @@ import com.example.anbo.checkbooktesting.subcomponents.TagListAdapter;
 
 import java.lang.reflect.Array;
 import java.util.Calendar;
+import java.util.List;
 
-public class CostRecordingActivity extends Activity
+public class CostRecordingActivity extends BaseCheckbookActivity
 implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagFragmentListener{
 
-    CheckbookServiceManager serviceManager = new CheckbookServiceManager();
     Calendar entryDateReading = StaticUtil.roundDate(Calendar.getInstance());
     TagListAdapter adapter;
 
@@ -42,51 +42,37 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        Intent intent = new Intent(this, CheckbookService.class);
-        bindService(intent, serviceManager.mConnection, Context.BIND_AUTO_CREATE);
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (serviceManager.isBound) {
-            unbindService(serviceManager.mConnection);
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_cost_recording, menu);
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     public void addEntry(View view) {
+
+        //Costs
         EditText costView = (EditText) findViewById(R.id.cost_recording_activity_cost_edit_view);
-        double cost = Double.parseDouble(costView.getText().toString());
+        String costString = costView.getText().toString();
+        if (costString.isEmpty()) {
+            Toast toast = Toast.makeText(this, "You gotta enter a cost.", Toast.LENGTH_LONG);
+            toast.show();
+            return;
+        }
+        double cost = Double.parseDouble(costString);
+
+        //Note
         EditText noteView = (EditText) findViewById(R.id.cost_recording_screen_note_edit_view);
         String note = noteView.getText().toString();
-        serviceManager.service.createEntry(entryDateReading, cost, adapter.getAllStrings(), note);
-        Toast toast = Toast.makeText(this, "!!?!?!" + cost, Toast.LENGTH_LONG);
-        toast.show();
+
+        //List of tags
+        List<String> tagList = adapter.getAllStrings();
+        if (tagList.isEmpty()) {
+            Toast toast = Toast.makeText(this, "You gotta enter a tag.", Toast.LENGTH_LONG);
+            toast.show();
+            return;
+        }
+
+        serviceManager.service.createEntry(entryDateReading, cost, tagList, note);
     }
 
     @Override
@@ -114,7 +100,8 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
         textView.setText(StaticUtil.getStringFromCalendar(date));
     }
 
-    public void setDate (int year, int month, int day){
+    public void setDate (int year, int month, int day, boolean isSearch, boolean isLower){
+        //don't care about lower or search
         entryDateReading.set(Calendar.YEAR, year);
         entryDateReading.set(Calendar.MONTH, month);
         entryDateReading.set(Calendar.DAY_OF_MONTH, day);

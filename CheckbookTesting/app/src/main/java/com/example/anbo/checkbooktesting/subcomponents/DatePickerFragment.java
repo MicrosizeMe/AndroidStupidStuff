@@ -16,8 +16,11 @@ public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
     public interface DatePickerDialogueListener{
-        void setDate(int year, int month, int day);
+        void setDate(int year, int month, int day, boolean isSearch, boolean isLower);
     }
+
+    private boolean isSearch = false;
+    private boolean isLower = false;
 
     DatePickerDialogueListener activity;
 
@@ -46,6 +49,11 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        activity.setDate(year, month, day);
+        activity.setDate(year, month, day, isSearch, isLower);
+    }
+
+    public void setSearch(boolean isSearch, boolean isLower) {
+        this.isSearch = isSearch;
+        this.isLower = this.isSearch && isLower;
     }
 }

@@ -34,7 +34,7 @@ public class CheckbookService extends Service {
         if (db == null){
             CheckbookSqlHelper helper = new CheckbookSqlHelper(this);
             db = helper.getWritableDatabase();
-            helper.resetDb(db);
+            //helper.resetDb(db);
         }
         return binder;
     }
@@ -81,7 +81,7 @@ public class CheckbookService extends Service {
         values.put(CheckbookContract.ENTRY.UUID, entryUUIDString);
         values.put(CheckbookContract.ENTRY.DATE_UUID_COLUMN_NAME, dateUUID.toString());
         values.put(CheckbookContract.ENTRY.COST_COLUMN_NAME, Math.floor(cost * 100) / 100);
-        values.put(CheckbookContract.ENTRY.NOTE_COLUMN_NAME, note.trim());
+        values.put(CheckbookContract.ENTRY.NOTE_COLUMN_NAME, note == null ? null : note.trim());
         db.insert(
                 CheckbookContract.ENTRY.TABLE_NAME,
                 null,
@@ -96,6 +96,7 @@ public class CheckbookService extends Service {
             }
             createEntryTagRelationship(entryUUID, tagUUID);
         }
+        this.showToast();
         return entryUUID;
     }
 
@@ -128,7 +129,6 @@ public class CheckbookService extends Service {
                 null,
                 values
         );
-        showToast();
         return dateUUID;
     }
 
@@ -149,7 +149,7 @@ public class CheckbookService extends Service {
                         CheckbookContract.TAG_RULES.TAG,
                         CheckbookContract.TAG_RULES.TAG_IMPLIES
                 },
-                "WHERE " + CheckbookContract.TAG_RULES.TAG + " = " + tagUUID.toString(),
+                CheckbookContract.TAG_RULES.TAG + " = '" + tagUUID.toString() + "'",
                 null, null, null, null, null
         );
 
@@ -170,6 +170,20 @@ public class CheckbookService extends Service {
         UUID tagImpliesID = getTagByName(tagImplies);
         if (tagImpliesID == null)
             tagImpliesID = createTag(tagImplies);
+        Cursor tagQuery = db.query(
+                false,
+                CheckbookContract.TAG_RULES.TABLE_NAME,
+                new String[] {CheckbookContract.TAG_RULES.TAG,
+                        CheckbookContract.TAG_RULES.TAG_IMPLIES},
+                CheckbookContract.TAG_RULES.TAG + " = '" + tag + "'" +
+                        " AND "
+                        + CheckbookContract.TAG_RULES.TAG_IMPLIES + " = '" + tagImplies + "'",
+                null, null, null, null, null
+        );
+        int count = tagQuery.getCount();
+        tagQuery.close();
+        if (count != 0) return;
+
         ContentValues values = new ContentValues(2);
         values.put(CheckbookContract.TAG_RULES.TAG, tagID.toString());
         values.put(CheckbookContract.TAG_RULES.TAG_IMPLIES, tagImpliesID.toString());
@@ -180,9 +194,8 @@ public class CheckbookService extends Service {
         Cursor tagQuery = db.query(
                 false,
                 CheckbookContract.TAG.TABLE_NAME,
-                new String[]{CheckbookContract.TAG.UUID, CheckbookContract.TAG.NAME_COLUMN_NAME},
-                "WHERE " + CheckbookContract.TAG.NAME_COLUMN_NAME + " = "
-                        + name,
+                new String[] {CheckbookContract.TAG.UUID, CheckbookContract.TAG.NAME_COLUMN_NAME},
+                CheckbookContract.TAG.NAME_COLUMN_NAME + " = '" + name + "'",
                 null, null, null, null, null
         );
         if (tagQuery.getCount() == 0){
@@ -199,8 +212,8 @@ public class CheckbookService extends Service {
                 true,
                 CheckbookContract.DATE.TABLE_NAME,
                 new String[]{CheckbookContract.DATE.UUID, CheckbookContract.DATE.DATE_COLUMN_NAME},
-                "WHERE " + CheckbookContract.DATE.DATE_COLUMN_NAME
-                        + " = " + StaticUtil.getMinutesSinceEpoch(date),
+                CheckbookContract.DATE.DATE_COLUMN_NAME
+                        + " = '" + StaticUtil.getMinutesSinceEpoch(date) + "'",
                 null, null, null, null, null);
         if (dateQuery.getCount() == 0){
             dateQuery.close();
