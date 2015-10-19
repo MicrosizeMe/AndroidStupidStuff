@@ -13,7 +13,7 @@ public class CheckbookContract {
     public static void createAllTables(SQLiteDatabase db){
         db.execSQL(ENTRY.CREATE_TABLE);
         db.execSQL(TAG.CREATE_TABLE);
-        db.execSQL(DATE.CREATE_TABLE);
+        //db.execSQL(DATE.CREATE_TABLE);
         db.execSQL(ENTRY_TO_TAG.CREATE_TABLE);
         db.execSQL(TAG_RULES.CREATE_TABLE);
     }
@@ -21,7 +21,7 @@ public class CheckbookContract {
     public static void dropAllTables(SQLiteDatabase db){
         db.execSQL(ENTRY.DROP_TABLE);
         db.execSQL(TAG.DROP_TABLE);
-        db.execSQL(DATE.DROP_TABLE);
+        //db.execSQL(DATE.DROP_TABLE);
         db.execSQL(ENTRY_TO_TAG.DROP_TABLE);
         db.execSQL(TAG_RULES.DROP_TABLE);
     }
@@ -30,7 +30,8 @@ public class CheckbookContract {
         public final static String TABLE_NAME = "entryTable";
         public final static String UUID = "entryUUID";
         public final static int UUID_COLUMN_INDEX = 0;
-        public final static String DATE_UUID_COLUMN_NAME = "entryDateID";
+        //public final static String DATE_UUID_COLUMN_NAME = "entryDateID";
+        public final static String DATE_COLUMN_NAME = "entryDate";
         public final static int DATE_UUID_COLUMN_INDEX = 1;
         public final static String COST_COLUMN_NAME = "entryCost";
         public final static int COST_COLUMN_INDEX = 2;
@@ -41,7 +42,8 @@ public class CheckbookContract {
                 + TABLE_NAME
                 + " ("
                 + UUID + " TEXT PRIMARY KEY, "
-                + DATE_UUID_COLUMN_NAME + " TEXT, " //" INTEGER FOREIGN KEY, "
+                //+ DATE_UUID_COLUMN_NAME + " TEXT, " //" INTEGER FOREIGN KEY, "
+                + DATE_COLUMN_NAME + " INTEGER, " //" INTEGER FOREIGN KEY, "
                 + COST_COLUMN_NAME + " REAL, "
                 + NOTE_COLUMN_NAME + " TEXT);";
         public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME + ";";
@@ -63,7 +65,7 @@ public class CheckbookContract {
         public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME + ";";
     }
 
-    public abstract static class DATE {
+    /*public abstract static class DATE {
         public final static String TABLE_NAME = "dateTable";
         public final static String UUID = "dateUUID";
         public final static int UUID_COLUMN_INDEX = 0;
@@ -76,7 +78,7 @@ public class CheckbookContract {
                 + UUID + " TEXT PRIMARY KEY, "
                 + DATE_COLUMN_NAME + " INTEGER);";
         public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME + ";";
-    }
+    }*/
 
     public abstract static class ENTRY_TO_TAG {
         public final static String TABLE_NAME = "entryToTagTable";

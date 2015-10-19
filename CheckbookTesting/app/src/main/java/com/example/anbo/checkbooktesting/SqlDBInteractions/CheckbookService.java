@@ -35,7 +35,7 @@ public class CheckbookService extends Service {
         if (db == null){
             CheckbookSqlHelper helper = new CheckbookSqlHelper(this);
             db = helper.getWritableDatabase();
-            //helper.resetDb(db);
+            helper.resetDb(db);
         }
         return binder;
     }
@@ -73,17 +73,13 @@ public class CheckbookService extends Service {
     }
 
     public UUID createEntry(Calendar date, double cost, List<String> tags, String note){
-        //Get date ID
-        UUID dateUUID = getDateByCalendar(date);
-        if (dateUUID == null) dateUUID = createDate(date);
-
         //Add the entry
         UUID entryUUID = UUID.randomUUID();
         String entryUUIDString = entryUUID.toString();
 
         ContentValues values = new ContentValues();
         values.put(CheckbookContract.ENTRY.UUID, entryUUIDString);
-        values.put(CheckbookContract.ENTRY.DATE_UUID_COLUMN_NAME, dateUUID.toString());
+        values.put(CheckbookContract.ENTRY.DATE_COLUMN_NAME, StaticUtil.getMinutesSinceEpoch(date));
         values.put(CheckbookContract.ENTRY.COST_COLUMN_NAME, Math.floor(cost * 100) / 100);
         values.put(CheckbookContract.ENTRY.NOTE_COLUMN_NAME, note == null ? null : note.trim());
         db.insert(
@@ -118,22 +114,6 @@ public class CheckbookService extends Service {
         );
         tagListUpToDate = false;
         return tagUUID;
-    }
-
-    public UUID createDate(Calendar date) {
-        UUID dateUUID = getDateByCalendar(date);
-        if (dateUUID != null) return dateUUID;
-        dateUUID = UUID.randomUUID();
-        ContentValues values = new ContentValues(2);
-        values.put(CheckbookContract.DATE.UUID, dateUUID.toString());
-        values.put(CheckbookContract.DATE.DATE_COLUMN_NAME,
-                StaticUtil.getMinutesSinceEpoch(date));
-        db.insert(
-                CheckbookContract.DATE.TABLE_NAME,
-                null,
-                values
-        );
-        return dateUUID;
     }
 
     private void createEntryTagRelationship(UUID entryUUID, UUID tagUUID) {
@@ -212,48 +192,96 @@ public class CheckbookService extends Service {
         return returnUUID;
     }
 
-    private UUID getDateByCalendar (Calendar date) {
-        Cursor dateQuery = db.query(
-                true,
-                CheckbookContract.DATE.TABLE_NAME,
-                new String[]{CheckbookContract.DATE.UUID, CheckbookContract.DATE.DATE_COLUMN_NAME},
-                CheckbookContract.DATE.DATE_COLUMN_NAME
-                        + " = '" + StaticUtil.getMinutesSinceEpoch(date) + "'",
-                null, null, null, null, null);
-        if (dateQuery.getCount() == 0){
-            dateQuery.close();
-            return null;
-        }
-        dateQuery.moveToFirst();
-        UUID dateUUID = UUID.fromString(dateQuery.getString(0));
-        dateQuery.close();
-        return dateUUID;
-    }
-
-    private Cursor getDatesAbove (Calendar date) {
-        Cursor dateQuery = db.query(
-                true,
-                CheckbookContract.DATE.TABLE_NAME,
-                new String[]{CheckbookContract.DATE.UUID}
-        )
-    }
-
     public List<Entry> findEntries(double costLower, double costUpper,
                                    Calendar dateLower, Calendar dateUpper,
                                    List<String> tagList){
+        List<String> whereClauses = new ArrayList<>();
         String costLowerWhere = null;
         if (costLower >= 0) {
-            costLower = Math.floor(costLower * 100) / 100;
-            costLowerWhere = CheckbookContract.ENTRY.COST_COLUMN_NAME + " >= " + costLower;
+            costLowerWhere = CheckbookContract.ENTRY.TABLE_NAME + "."
+                    + CheckbookContract.ENTRY.COST_COLUMN_NAME + " >= "
+                    + Math.floor(costLower * 100) / 100;
+            whereClauses.add(costLowerWhere);
         }
         String costUpperWhere = null;
         if (costUpper >= 0) {
-            costLower = Math.floor(costLower * 100) / 100;
-            costUpperWhere = CheckbookContract.ENTRY.COST_COLUMN_NAME + " <= " + costLower;
+            costUpperWhere = CheckbookContract.ENTRY.TABLE_NAME + "."
+                    + CheckbookContract.ENTRY.COST_COLUMN_NAME + " <= "
+                    + Math.floor(costLower * 100) / 100;
+            whereClauses.add(costUpperWhere);
         }
         String dateLowerWhere = null;
         if (dateLower != null) {
-            dateLowerWhere = CheckbookContract.ENTRY.DA
+            dateLowerWhere = CheckbookContract.ENTRY.TABLE_NAME + "."
+                    + CheckbookContract.ENTRY.DATE_COLUMN_NAME + " >= "
+                    + StaticUtil.getMinutesSinceEpoch(dateLower);
+            whereClauses.add(dateLowerWhere);
         }
+        String dateUpperWhere = null;
+        if (dateUpper != null) {
+            dateUpperWhere = CheckbookContract.ENTRY.TABLE_NAME + "."
+                    + CheckbookContract.ENTRY.DATE_COLUMN_NAME + " >= "
+                    + StaticUtil.getMinutesSinceEpoch(dateLower);
+            whereClauses.add(dateUpperWhere);
+        }
+
+        List<String> tagClauses = new ArrayList<>();
+        for (String tag : tagList) {
+            tagClauses.add(
+                    CheckbookContract.TAG.TABLE_NAME + "."
+                            + CheckbookContract.TAG.NAME_COLUMN_NAME + " = '" + tag + "'"
+            );
+        }
+
+        String whereStatement = "";
+        int count = whereClauses.size();
+        if (count != 0){
+            whereStatement += "WHERE (" + whereClauses.get(0) + ") ";
+            for (int i = 1; i < count; i++) {
+                whereStatement += " AND (" + whereClauses.get(i) + ") ";
+            }
+        }
+
+        count = tagClauses.size();
+        if (count != 0) {
+            if (whereStatement.isEmpty()) whereStatement += "WHERE (";
+            else whereStatement += " AND (";
+            whereStatement += "(" + tagClauses.get(0) + ")";
+            for (int i = 1; i < count; i++) {
+                whereStatement += " OR (" + tagClauses.get(i) + ") ";
+            }
+            whereStatement +=  ") ";
+        }
+
+        String rawQuery = "SELECT "
+                + CheckbookContract.ENTRY.TABLE_NAME + "."
+                    + CheckbookContract.ENTRY.UUID + " , "
+                + CheckbookContract.ENTRY.TABLE_NAME + "."
+                    + CheckbookContract.ENTRY.DATE_COLUMN_NAME + " , "
+                + CheckbookContract.ENTRY.TABLE_NAME + "."
+                    + CheckbookContract.ENTRY.COST_COLUMN_NAME + " , "
+                + CheckbookContract.ENTRY.TABLE_NAME + "."
+                    + CheckbookContract.ENTRY.NOTE_COLUMN_NAME + " , "
+                + CheckbookContract.TAG.TABLE_NAME + "."
+                    + CheckbookContract.TAG.NAME_COLUMN_NAME;
+        rawQuery += " FROM " + CheckbookContract.ENTRY.TABLE_NAME;
+        rawQuery += " JOIN " + CheckbookContract.ENTRY_TO_TAG.TABLE_NAME
+                + " ON ("
+                    + CheckbookContract.ENTRY.TABLE_NAME + "." + CheckbookContract.ENTRY.UUID
+                    + " = "
+                    + CheckbookContract.ENTRY_TO_TAG.TABLE_NAME
+                        + "." + CheckbookContract.ENTRY_TO_TAG.ENTRY_UUID_COLUMN_NAME
+                + ") ";
+        rawQuery += " JOIN " + CheckbookContract.TAG.TABLE_NAME
+                + " ON ("
+                    + CheckbookContract.ENTRY_TO_TAG.TABLE_NAME
+                        + "." + CheckbookContract.ENTRY_TO_TAG.TAG_UUID_COLUMN_NAME
+                    + " = "
+                    + CheckbookContract.TAG.TABLE_NAME
+                        + "." + CheckbookContract.TAG.UUID
+                + ") ";
+        rawQuery += whereStatement;
+
+        Cursor queryResults = db.rawQuery(rawQuery, null);
     }
 }
