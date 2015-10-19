@@ -20,11 +20,9 @@ import java.util.List;
  * Created by Anbo on 10/14/2015.
  */
 public class TagListAdapter extends ArrayAdapter<String>{
-    private Context context;
 
     public TagListAdapter (Context context){
         super(context, -1, new ArrayList<String>());
-        this.context = context;
     }
 
     public List<String> getAllStrings() {
@@ -32,7 +30,7 @@ public class TagListAdapter extends ArrayAdapter<String>{
         List<String> returnList = new ArrayList<>();
         for (int i = 0; i < size; i++){
             String item = getItem(i);
-            if (item != null && !item.isEmpty());
+            if (item != null && !item.isEmpty())
                 returnList.add(getItem(i));
         }
         return returnList;
@@ -41,7 +39,7 @@ public class TagListAdapter extends ArrayAdapter<String>{
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater =
-                (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.tag_entry_or_search_term, null, false);
         TextView textView = (TextView) layout.findViewById(R.id.tag_entry_or_search_text_view);
         textView.setText(getItem(position));

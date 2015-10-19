@@ -1,6 +1,7 @@
 package com.example.anbo.checkbooktesting;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -47,9 +48,24 @@ implements DatePickerFragment.DatePickerDialogueListener,
                 (EditText) findViewById(R.id.search_entry_activity_cost_high_bound);
         String costStringLower;
         String costStringUpper;
+
+        double lowerCost;
+        double upperCost;
         try {
-            costStringLower = lowerCostText.getText().toString();
-            costStringUpper = upperCostText.getText().toString();
+            costStringLower = lowerCostText.getText().toString().trim();
+            costStringUpper = upperCostText.getText().toString().trim();
+            if (costStringLower.isEmpty()) {
+                lowerCost = -1.0;
+            }
+            else {
+                lowerCost = Double.parseDouble(costStringLower);
+            }
+            if (costStringUpper.isEmpty()) {
+                upperCost = -1.0;
+            }
+            else {
+                upperCost = Double.parseDouble(costStringUpper);
+            }
         }
         catch (NumberFormatException e) {
             Toast toast = Toast.makeText(this, "Try to actually type numbers, dumbass."
@@ -60,13 +76,11 @@ implements DatePickerFragment.DatePickerDialogueListener,
             return;
         }
 
-        double lowerCost = Double.parseDouble(costStringLower);
-        double upperCost = Double.parseDouble(costStringUpper);
-
         List<String> tagList = adapter.getAllStrings();
 
-
-        //Todo implement search functionality
+        serviceManager.service.findEntries(lowerCost, upperCost, dateLower, dateUpper, tagList);
+        Intent intent = new Intent(this, EntryCollectionViewActivity.class);
+        startActivity(intent);
     }
 
     public void showTagEntryDialog(View view) {

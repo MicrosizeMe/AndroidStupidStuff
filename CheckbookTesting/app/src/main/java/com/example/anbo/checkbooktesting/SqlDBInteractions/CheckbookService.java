@@ -22,6 +22,7 @@ public class CheckbookService extends Service {
     public SQLiteDatabase db;
     private boolean tagListUpToDate = false;
     private List<String> tagList = new ArrayList<>();
+    private List<Entry> previousSearch;
 
     private CheckbookBinder binder = new CheckbookBinder();
     public class CheckbookBinder extends Binder{
@@ -98,6 +99,21 @@ public class CheckbookService extends Service {
         }
         this.showToast();
         return entryUUID;
+    }
+
+    public UUID editEntry(String uuidString, Calendar date,
+                          double cost, List<String> tags, String note) {
+        //TODO finish edit logic
+        /*Cursor entryQuery = db.query(
+                false,
+                CheckbookContract.ENTRY.TABLE_NAME,
+                new String[] {
+                        CheckbookContract.ENTRY.DATE_COLUMN_NAME,
+                        CheckbookContract.ENTRY.COST_COLUMN_NAME,
+                        CheckbookContract.ENTRY.NOTE_COLUMN_NAME
+                },
+        );*/
+        return null;
     }
 
     public UUID createTag(String name) {
@@ -196,33 +212,25 @@ public class CheckbookService extends Service {
                                    Calendar dateLower, Calendar dateUpper,
                                    List<String> tagList){
         List<String> whereClauses = new ArrayList<>();
-        String costLowerWhere = null;
         if (costLower >= 0) {
-            costLowerWhere = CheckbookContract.ENTRY.TABLE_NAME + "."
+            whereClauses.add(CheckbookContract.ENTRY.TABLE_NAME + "."
                     + CheckbookContract.ENTRY.COST_COLUMN_NAME + " >= "
-                    + Math.floor(costLower * 100) / 100;
-            whereClauses.add(costLowerWhere);
+                    + Math.floor(costLower * 100) / 100);
         }
-        String costUpperWhere = null;
         if (costUpper >= 0) {
-            costUpperWhere = CheckbookContract.ENTRY.TABLE_NAME + "."
+            whereClauses.add(CheckbookContract.ENTRY.TABLE_NAME + "."
                     + CheckbookContract.ENTRY.COST_COLUMN_NAME + " <= "
-                    + Math.floor(costLower * 100) / 100;
-            whereClauses.add(costUpperWhere);
+                    + Math.floor(costLower * 100) / 100);
         }
-        String dateLowerWhere = null;
         if (dateLower != null) {
-            dateLowerWhere = CheckbookContract.ENTRY.TABLE_NAME + "."
+            whereClauses.add(CheckbookContract.ENTRY.TABLE_NAME + "."
                     + CheckbookContract.ENTRY.DATE_COLUMN_NAME + " >= "
-                    + StaticUtil.getMinutesSinceEpoch(dateLower);
-            whereClauses.add(dateLowerWhere);
+                    + StaticUtil.getMinutesSinceEpoch(dateLower));
         }
-        String dateUpperWhere = null;
         if (dateUpper != null) {
-            dateUpperWhere = CheckbookContract.ENTRY.TABLE_NAME + "."
+            whereClauses.add(CheckbookContract.ENTRY.TABLE_NAME + "."
                     + CheckbookContract.ENTRY.DATE_COLUMN_NAME + " >= "
-                    + StaticUtil.getMinutesSinceEpoch(dateLower);
-            whereClauses.add(dateUpperWhere);
+                    + StaticUtil.getMinutesSinceEpoch(dateLower));
         }
 
         List<String> tagClauses = new ArrayList<>();
@@ -283,5 +291,39 @@ public class CheckbookService extends Service {
         rawQuery += whereStatement;
 
         Cursor queryResults = db.rawQuery(rawQuery, null);
+
+        queryResults.moveToFirst();
+        List<Entry> entries = new ArrayList<>();
+        while (!queryResults.isAfterLast()) {
+            String uuidString = queryResults.getString(0);
+            UUID uuid = UUID.fromString(uuidString);
+            Calendar cal = StaticUtil.getCalendarFromMinutes(queryResults.getLong(1));
+            double cost = queryResults.getDouble(2);
+            String note = queryResults.getString(3);
+            List<String> tags = new ArrayList<>();
+            for (
+                    ;
+                    !queryResults.isAfterLast() && queryResults.getString(0).equals(uuidString);
+                    queryResults.moveToNext()) {
+                    tags.add(queryResults.getString(4));
+            }
+            Entry currentEntry = new DbEntry(db, uuid, cal, cost, tags, note);
+            entries.add(currentEntry);
+        }
+        queryResults.close();
+        previousSearch = entries;
+        return entries;
+    }
+
+    public double sumEntries(List<Entry> entries) {
+        double sum = 0.0;
+        for (Entry entry : entries) {
+            sum += entry.getCost();
+        }
+        return sum;
+    }
+
+    public List<Entry> getPreviousSearch(){
+        return previousSearch;
     }
 }

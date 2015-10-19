@@ -1,13 +1,13 @@
 package com.example.anbo.checkbooktesting;
 
-import android.content.Context;
-
 import java.util.Calendar;
 
 /**
  * Created by Anbo on 10/10/2015.
  */
 public class StaticUtil {
+
+    final public static double MILLISECONDS_PER_MINUTE = 60000.0;
 
     public static Calendar roundDate(Calendar date) {
         date.set(Calendar.MILLISECOND, 0);
@@ -24,6 +24,12 @@ public class StaticUtil {
     }
 
     public static long getMinutesSinceEpoch(Calendar date) {
-        return (int) Math.floor((double)(date.getTimeInMillis()) / 60000.0);
+        return (int) Math.floor((double)(date.getTimeInMillis()) / MILLISECONDS_PER_MINUTE);
+    }
+
+    public static Calendar getCalendarFromMinutes(long minutes) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(minutes * (long) MILLISECONDS_PER_MINUTE);
+        return cal;
     }
 }

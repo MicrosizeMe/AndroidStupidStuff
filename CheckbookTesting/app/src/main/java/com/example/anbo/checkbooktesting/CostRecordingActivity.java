@@ -1,6 +1,7 @@
 package com.example.anbo.checkbooktesting;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -21,6 +22,10 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
 
     Calendar entryDateReading = StaticUtil.roundDate(Calendar.getInstance());
     TagListAdapter adapter;
+    String uuid;
+
+    public static final String EDIT_FLAG = "com.example.CostRecordingActivity.isEditing";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,10 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
         adapter = new TagListAdapter(this);
         ((ListView) findViewById(R.id.cost_recording_screen_tag_list)).setAdapter(
                 adapter);
+        Intent intent = getIntent();
+        uuid = intent.getStringExtra(EDIT_FLAG);
+
+        //TODO do edit logic
     }
 
     @Override
