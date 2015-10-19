@@ -20,13 +20,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:inputType="numberDecimal"
-            android:hint="@string/search_entry_activity_cost_low_bound_hint"/>
+            android:hint="@string/search_entry_activity_cost_low_bound_hint"
+            android:id="@+id/search_entry_activity_cost_low_bound"/>
         <EditText
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:inputType="numberDecimal"
-            android:hint="@string/search_entry_activity_cost_high_bound_hint"/>
+            android:hint="@string/search_entry_activity_cost_high_bound_hint"
+            android:id="@+id/search_entry_activity_cost_high_bound"/>
     </LinearLayout>
 
     <TextView

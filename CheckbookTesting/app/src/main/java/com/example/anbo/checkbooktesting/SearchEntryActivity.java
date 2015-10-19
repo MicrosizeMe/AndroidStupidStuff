@@ -4,14 +4,17 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.anbo.checkbooktesting.subcomponents.AddTagFragment;
 import com.example.anbo.checkbooktesting.subcomponents.DatePickerFragment;
 import com.example.anbo.checkbooktesting.subcomponents.TagListAdapter;
 
 import java.util.Calendar;
+import java.util.List;
 
 public class SearchEntryActivity extends BaseCheckbookActivity
 implements DatePickerFragment.DatePickerDialogueListener,
@@ -38,6 +41,31 @@ implements DatePickerFragment.DatePickerDialogueListener,
     }
 
     public void search(View view) {
+        EditText lowerCostText =
+                (EditText) findViewById(R.id.search_entry_activity_cost_low_bound);
+        EditText upperCostText =
+                (EditText) findViewById(R.id.search_entry_activity_cost_high_bound);
+        String costStringLower;
+        String costStringUpper;
+        try {
+            costStringLower = lowerCostText.getText().toString();
+            costStringUpper = upperCostText.getText().toString();
+        }
+        catch (NumberFormatException e) {
+            Toast toast = Toast.makeText(this, "Try to actually type numbers, dumbass."
+                    , Toast.LENGTH_LONG);
+            toast.show();
+            lowerCostText.getText().clear();
+            upperCostText.getText().clear();
+            return;
+        }
+
+        double lowerCost = Double.parseDouble(costStringLower);
+        double upperCost = Double.parseDouble(costStringUpper);
+
+        List<String> tagList = adapter.getAllStrings();
+
+
         //Todo implement search functionality
     }
 

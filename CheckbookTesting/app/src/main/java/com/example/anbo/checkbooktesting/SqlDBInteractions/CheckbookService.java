@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.widget.Toast;
 
 import com.example.anbo.checkbooktesting.StaticUtil;
+import com.example.anbo.checkbooktesting.checkbookInterface.Entry;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -167,7 +168,6 @@ public class CheckbookService extends Service {
     }
 
     public void createImplicitTagRelationship(String tag, String tagImplies) {
-        //TODO make sure that we don't add duplicates
         UUID tagID = getTagByName(tag);
         if (tagID == null)
             tagID = createTag(tag);
@@ -198,7 +198,7 @@ public class CheckbookService extends Service {
         Cursor tagQuery = db.query(
                 false,
                 CheckbookContract.TAG.TABLE_NAME,
-                new String[] {CheckbookContract.TAG.UUID, CheckbookContract.TAG.NAME_COLUMN_NAME},
+                new String[]{CheckbookContract.TAG.UUID, CheckbookContract.TAG.NAME_COLUMN_NAME},
                 CheckbookContract.TAG.NAME_COLUMN_NAME + " = '" + name + "'",
                 null, null, null, null, null
         );
@@ -228,5 +228,32 @@ public class CheckbookService extends Service {
         UUID dateUUID = UUID.fromString(dateQuery.getString(0));
         dateQuery.close();
         return dateUUID;
+    }
+
+    private Cursor getDatesAbove (Calendar date) {
+        Cursor dateQuery = db.query(
+                true,
+                CheckbookContract.DATE.TABLE_NAME,
+                new String[]{CheckbookContract.DATE.UUID}
+        )
+    }
+
+    public List<Entry> findEntries(double costLower, double costUpper,
+                                   Calendar dateLower, Calendar dateUpper,
+                                   List<String> tagList){
+        String costLowerWhere = null;
+        if (costLower >= 0) {
+            costLower = Math.floor(costLower * 100) / 100;
+            costLowerWhere = CheckbookContract.ENTRY.COST_COLUMN_NAME + " >= " + costLower;
+        }
+        String costUpperWhere = null;
+        if (costUpper >= 0) {
+            costLower = Math.floor(costLower * 100) / 100;
+            costUpperWhere = CheckbookContract.ENTRY.COST_COLUMN_NAME + " <= " + costLower;
+        }
+        String dateLowerWhere = null;
+        if (dateLower != null) {
+            dateLowerWhere = CheckbookContract.ENTRY.DA
+        }
     }
 }

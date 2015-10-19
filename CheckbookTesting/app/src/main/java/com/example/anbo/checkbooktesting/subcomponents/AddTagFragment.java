@@ -46,7 +46,9 @@ public class AddTagFragment extends DialogFragment {
         builder.setTitle(R.string.tag_entry_dialogue_title);
 
         final AutoCompleteTextView textView = new AutoCompleteTextView(getActivity());
-        textView.setAdapter(new ArrayAdapter<>(getActivity(), -1, activity.getTagStrings()));
+        textView.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_item,
+                activity.getTagStrings()));
+        textView.setThreshold(0);
         textView.setHint(R.string.tag_entry_or_search_enter_tag_hint);
         textView.requestFocus();
         builder.setView(textView);

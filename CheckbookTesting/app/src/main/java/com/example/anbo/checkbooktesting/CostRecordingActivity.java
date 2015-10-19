@@ -43,7 +43,17 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
 
         //Costs
         EditText costView = (EditText) findViewById(R.id.cost_recording_activity_cost_edit_view);
-        String costString = costView.getText().toString();
+        String costString;
+        try{
+            costString = costView.getText().toString();
+        }
+        catch (NumberFormatException e) {
+            Toast toast = Toast.makeText(this, "Try to actually type numbers, dumbass."
+                    , Toast.LENGTH_LONG);
+            toast.show();
+            costView.getText().clear();
+            return;
+        }
         if (costString.isEmpty()) {
             Toast toast = Toast.makeText(this, "You gotta enter a cost.", Toast.LENGTH_LONG);
             toast.show();
