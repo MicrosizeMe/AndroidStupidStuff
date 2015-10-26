@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.anbo.checkbooktesting.activityPrototypes.StaticCheckbookActivity;
 import com.example.anbo.checkbooktesting.subcomponents.AddTagFragment;
 import com.example.anbo.checkbooktesting.subcomponents.DatePickerFragment;
 import com.example.anbo.checkbooktesting.subcomponents.TagListAdapter;
@@ -17,7 +18,7 @@ import com.example.anbo.checkbooktesting.subcomponents.TagListAdapter;
 import java.util.Calendar;
 import java.util.List;
 
-public class SearchEntryActivity extends BaseCheckbookActivity
+public class SearchEntryActivity extends StaticCheckbookActivity
 implements DatePickerFragment.DatePickerDialogueListener,
         AddTagFragment.AddTagFragmentListener{
 

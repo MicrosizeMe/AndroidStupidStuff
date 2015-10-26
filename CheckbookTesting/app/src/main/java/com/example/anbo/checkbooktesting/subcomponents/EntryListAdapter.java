@@ -21,8 +21,8 @@ import java.util.List;
  * Created by Anbo on 10/18/2015.
  */
 public class EntryListAdapter extends ArrayAdapter<Entry> {
-    public EntryListAdapter(Context context) {
-        super(context, -1, new ArrayList<Entry>());
+    public EntryListAdapter(Context context, List<Entry> entries) {
+        super(context, -1, entries);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class EntryListAdapter extends ArrayAdapter<Entry> {
 
         final Entry currentEntry = getItem(position);
         dateView.setText(StaticUtil.getStringFromCalendar(currentEntry.getDate()));
-        costView.setText("" + currentEntry.getCost());
+        costView.setText(StaticUtil.parseDouble(currentEntry.getCost()));
         String note = currentEntry.getNote();
         if (note != null) noteView.setText(note);
 
@@ -54,6 +54,7 @@ public class EntryListAdapter extends ArrayAdapter<Entry> {
                 //TODO Modify CostRecordingActivity to be able to modify costs
                 Intent intent = new Intent(getContext(), CostRecordingActivity.class);
                 intent.putExtra(CostRecordingActivity.EDIT_FLAG, currentEntry.getUUID().toString());
+                getContext().startActivity(intent);
             }
         });
 

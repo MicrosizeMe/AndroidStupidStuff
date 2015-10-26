@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Semaphore;
 
 public class CheckbookService extends Service {
 
@@ -36,7 +37,6 @@ public class CheckbookService extends Service {
         if (db == null){
             CheckbookSqlHelper helper = new CheckbookSqlHelper(this);
             db = helper.getWritableDatabase();
-            helper.resetDb(db);
         }
         return binder;
     }
@@ -97,7 +97,6 @@ public class CheckbookService extends Service {
             }
             createEntryTagRelationship(entryUUID, tagUUID);
         }
-        this.showToast();
         return entryUUID;
     }
 
@@ -208,7 +207,7 @@ public class CheckbookService extends Service {
         return returnUUID;
     }
 
-    public List<Entry> findEntries(double costLower, double costUpper,
+    public synchronized List<Entry> findEntries(double costLower, double costUpper,
                                    Calendar dateLower, Calendar dateUpper,
                                    List<String> tagList){
         List<String> whereClauses = new ArrayList<>();
@@ -315,15 +314,7 @@ public class CheckbookService extends Service {
         return entries;
     }
 
-    public double sumEntries(List<Entry> entries) {
-        double sum = 0.0;
-        for (Entry entry : entries) {
-            sum += entry.getCost();
-        }
-        return sum;
-    }
-
-    public List<Entry> getPreviousSearch(){
+    public synchronized List<Entry> getPreviousSearch(){
         return previousSearch;
     }
 }

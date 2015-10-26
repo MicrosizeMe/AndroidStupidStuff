@@ -18,13 +18,15 @@
         <TextView
             android:layout_width="0px"
             android:layout_height="wrap_content"
-            android:layout_weight="3"/>
+            android:layout_weight="3"
+            android:id="@+id/entry_collection_lookup_cost_text_view"/>
     </LinearLayout>
 
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="0px"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:id="@+id/entry_collection_lookup_entry_list_view">
 
     </ListView>
 

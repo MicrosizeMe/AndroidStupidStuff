@@ -1,13 +1,19 @@
 package com.example.anbo.checkbooktesting;
 
+import com.example.anbo.checkbooktesting.checkbookInterface.Entry;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Calendar;
+import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * Created by Anbo on 10/10/2015.
  */
 public class StaticUtil {
 
-    final public static double MILLISECONDS_PER_MINUTE = 60000.0;
+    public static final double MILLISECONDS_PER_MINUTE = 60000.0;
 
     public static Calendar roundDate(Calendar date) {
         date.set(Calendar.MILLISECOND, 0);
@@ -31,5 +37,18 @@ public class StaticUtil {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(minutes * (long) MILLISECONDS_PER_MINUTE);
         return cal;
+    }
+
+    public static double sumEntries(List<Entry> entries) {
+        double sum = 0.0;
+        for (Entry entry : entries) {
+            sum += entry.getCost();
+        }
+        return sum;
+    }
+
+    public static String parseDouble(double input) {
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        return formatter.format(input);
     }
 }

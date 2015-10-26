@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.anbo.checkbooktesting.activityPrototypes.StaticCheckbookActivity;
 import com.example.anbo.checkbooktesting.subcomponents.AddTagFragment;
 import com.example.anbo.checkbooktesting.subcomponents.DatePickerFragment;
 import com.example.anbo.checkbooktesting.subcomponents.TagListAdapter;
@@ -17,7 +18,7 @@ import com.example.anbo.checkbooktesting.subcomponents.TagListAdapter;
 import java.util.Calendar;
 import java.util.List;
 
-public class CostRecordingActivity extends BaseCheckbookActivity
+public class CostRecordingActivity extends StaticCheckbookActivity
 implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagFragmentListener{
 
     Calendar entryDateReading = StaticUtil.roundDate(Calendar.getInstance());
@@ -83,6 +84,9 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
         }
 
         serviceManager.service.createEntry(entryDateReading, cost, tagList, note);
+        Toast toast = Toast.makeText(this, "Entry created!", Toast.LENGTH_SHORT);
+        toast.show();
+        resetFields();
     }
 
     @Override
@@ -116,6 +120,16 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
         entryDateReading.set(Calendar.MONTH, month);
         entryDateReading.set(Calendar.DAY_OF_MONTH, day);
         setDateText(entryDateReading);
+    }
+
+    public void resetFields(){
+        entryDateReading = StaticUtil.roundDate(Calendar.getInstance());
+        setDateText(entryDateReading);
+        adapter.clear();
+        EditText costView = (EditText) findViewById(R.id.cost_recording_activity_cost_edit_view);
+        costView.setText("");
+        EditText noteView = (EditText) findViewById(R.id.cost_recording_screen_note_edit_view);
+        noteView.setText("");
     }
 
     public Calendar getEntryDateReading(boolean isLower){
