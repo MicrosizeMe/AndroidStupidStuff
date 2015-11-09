@@ -35,6 +35,7 @@ public abstract class StaticCheckbookActivity extends BaseCheckbookActivity {
         super.onStop();
         if (serviceManager.isBound) {
             unbindService(serviceManager.mConnection);
+            serviceManager.isBound = false;
         }
     }
 }

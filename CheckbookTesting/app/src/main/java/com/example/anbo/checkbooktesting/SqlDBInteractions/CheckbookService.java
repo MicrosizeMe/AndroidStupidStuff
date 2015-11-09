@@ -37,6 +37,7 @@ public class CheckbookService extends Service {
         if (db == null){
             CheckbookSqlHelper helper = new CheckbookSqlHelper(this);
             db = helper.getWritableDatabase();
+            //helper.resetDb(db);
         }
         return binder;
     }
@@ -116,6 +117,7 @@ public class CheckbookService extends Service {
     }
 
     public UUID createTag(String name) {
+        name = name.toLowerCase().trim();
         UUID tagUUID = getTagByName(name);
         if (tagUUID != null) return tagUUID;
         tagUUID = UUID.randomUUID();

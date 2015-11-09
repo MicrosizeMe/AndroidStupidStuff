@@ -44,7 +44,7 @@ public class EntryListAdapter extends ArrayAdapter<Entry> {
         List<String> tags = currentEntry.getTags();
         String tagList = "";
         for (String string : tags) {
-            tagList += string;
+            tagList += string + ", ";
         }
         tagsView.setText(tagList);
 

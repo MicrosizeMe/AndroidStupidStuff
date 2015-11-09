@@ -29,7 +29,7 @@ public class TagListAdapter extends ArrayAdapter<String>{
         int size = getCount();
         List<String> returnList = new ArrayList<>();
         for (int i = 0; i < size; i++){
-            String item = getItem(i);
+            String item = getItem(i).trim().toLowerCase();
             if (item != null && !item.isEmpty())
                 returnList.add(getItem(i));
         }
