@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +30,13 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
 
     public static final String EDIT_FLAG = "com.example.CostRecordingActivity.isEditing";
 
+    private class UserInputDataPacket{
+        double cost;
+        List<String> tagList;
+        String note;
+
+        UserInputDataPacket(){}
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +49,36 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
         Intent intent = getIntent();
         uuid = intent.getStringExtra(EDIT_FLAG);
 
-        //TODO do edit logic
+        LinearLayout buttonSpace =
+                (LinearLayout) findViewById(R.id.cost_recording_activity_button_space);
+
+        //Not editing, creating
+        if (uuid == null) {
+            Button button = new Button(this);
+            button.setText(R.string.cost_recording_activity_add_entry_button_text);
+            button.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addEntry(v);
+                }
+            });
+            buttonSpace.addView(button);
+        }
+        else { //Editing an existing entry
+            //TODO do edit logic
+            Button deleteEntryButton = new Button(this);
+            deleteEntryButton.setText(R.string.cost_recording_activity_delete_entry_button_text);
+            deleteEntryButton.setLayoutParams(new LinearLayout.LayoutParams(
+                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f));
+            Button editEntryButton = new Button(this);
+            editEntryButton.setText(R.string.cost_recording_activity_edit_entry_button_text);
+            editEntryButton.setLayoutParams(new LinearLayout.LayoutParams(
+                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f));
+            buttonSpace.addView(deleteEntryButton);
+            buttonSpace.addView(editEntryButton);
+        }
     }
 
     @Override
@@ -49,27 +88,27 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
         return true;
     }
 
-    public void addEntry(View view) {
-
+    private UserInputDataPacket readUserInfo(){
         //Costs
         EditText costView = (EditText) findViewById(R.id.cost_recording_activity_cost_edit_view);
         String costString;
+        double cost;
         try{
             costString = costView.getText().toString();
+            cost = Double.parseDouble(costString);
         }
         catch (NumberFormatException e) {
             Toast toast = Toast.makeText(this, "Try to actually type numbers, dumbass."
                     , Toast.LENGTH_LONG);
             toast.show();
             costView.getText().clear();
-            return;
+            return null;
         }
         if (costString.isEmpty()) {
             Toast toast = Toast.makeText(this, "You gotta enter a cost.", Toast.LENGTH_LONG);
             toast.show();
-            return;
+            return null;
         }
-        double cost = Double.parseDouble(costString);
 
         //Note
         EditText noteView = (EditText) findViewById(R.id.cost_recording_screen_note_edit_view);
@@ -80,13 +119,33 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
         if (tagList.isEmpty()) {
             Toast toast = Toast.makeText(this, "You gotta enter a tag.", Toast.LENGTH_LONG);
             toast.show();
-            return;
+            return null;
         }
 
-        serviceManager.service.createEntry(entryDateReading, cost, tagList, note);
+        UserInputDataPacket packet = new UserInputDataPacket();
+        packet.cost = cost;
+        packet.note = note;
+        packet.tagList = tagList;
+        return packet;
+    }
+
+    public void addEntry(View view) {
+        UserInputDataPacket packet = readUserInfo();
+        if (packet == null) return;
+
+        serviceManager.service.createEntry(
+                entryDateReading, packet.cost, packet.tagList, packet.note);
         Toast toast = Toast.makeText(this, "Entry created!", Toast.LENGTH_SHORT);
         toast.show();
         resetFields();
+    }
+
+    public void editEntry(View view) {
+        UserInputDataPacket packet = readUserInfo();
+        if (packet == null) return;
+
+        Toast toast = Toast.makeText(this, "TestText" + uuid, Toast.LENGTH_LONG);
+        toast.show();
     }
 
     @Override

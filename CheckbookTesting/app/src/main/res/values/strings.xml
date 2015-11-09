@@ -27,4 +27,6 @@
     <string name="menu_search_text">Search</string>
     <string name="menu_add_entry_text">Add Entry</string>
     <string name="title_activity_base">BaseActivity</string>
+    <string name="cost_recording_activity_delete_entry_button_text">Delete Entry</string>
+    <string name="cost_recording_activity_edit_entry_button_text">Edit Entry</string>
 </resources>
