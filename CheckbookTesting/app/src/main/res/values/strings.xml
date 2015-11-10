@@ -29,4 +29,5 @@
     <string name="title_activity_base">BaseActivity</string>
     <string name="cost_recording_activity_delete_entry_button_text">Delete Entry</string>
     <string name="cost_recording_activity_edit_entry_button_text">Edit Entry</string>
+    <string name="deletion_confirmation_fragment_deletion_confirm">You\'re about to delete this thing. Are you sure?</string>
 </resources>

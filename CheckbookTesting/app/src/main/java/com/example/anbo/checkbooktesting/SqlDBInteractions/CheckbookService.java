@@ -133,6 +133,66 @@ public class CheckbookService extends Service {
         return tagUUID;
     }
 
+    public void deleteEntry(String uuid) {
+        db.delete(CheckbookContract.ENTRY.TABLE_NAME,
+                CheckbookContract.ENTRY.UUID + " = '" + uuid + "'", null);
+        db.delete(CheckbookContract.ENTRY_TO_TAG.TABLE_NAME,
+                CheckbookContract.ENTRY_TO_TAG.ENTRY_UUID_COLUMN_NAME + " = '" +
+                    uuid + "'", null);
+    }
+
+    public Entry getEntry(String uuid){
+        Cursor entryInfo = db.query(
+                CheckbookContract.ENTRY.TABLE_NAME,
+                new String[]{
+                        CheckbookContract.ENTRY.DATE_COLUMN_NAME,
+                        CheckbookContract.ENTRY.COST_COLUMN_NAME,
+                        CheckbookContract.ENTRY.NOTE_COLUMN_NAME
+                },
+                CheckbookContract.ENTRY.UUID + " = '" + uuid + "'",
+                null, null, null, null
+        );
+        entryInfo.moveToFirst();
+        Calendar date = StaticUtil.getCalendarFromMinutes(entryInfo.getLong(0));
+        double cost = entryInfo.getDouble(1);
+        String note = entryInfo.getString(2);
+        entryInfo.close();
+
+        //Get tags
+        String rawQuery = "SELECT "
+                + CheckbookContract.TAG.TABLE_NAME + "."
+                + CheckbookContract.TAG.NAME_COLUMN_NAME;
+        rawQuery += " FROM " + CheckbookContract.ENTRY.TABLE_NAME;
+        rawQuery += " JOIN " + CheckbookContract.ENTRY_TO_TAG.TABLE_NAME
+                + " ON ("
+                + CheckbookContract.ENTRY.TABLE_NAME + "." + CheckbookContract.ENTRY.UUID
+                + " = "
+                + CheckbookContract.ENTRY_TO_TAG.TABLE_NAME
+                + "." + CheckbookContract.ENTRY_TO_TAG.ENTRY_UUID_COLUMN_NAME
+                + ") ";
+        rawQuery += " JOIN " + CheckbookContract.TAG.TABLE_NAME
+                + " ON ("
+                + CheckbookContract.ENTRY_TO_TAG.TABLE_NAME
+                + "." + CheckbookContract.ENTRY_TO_TAG.TAG_UUID_COLUMN_NAME
+                + " = "
+                + CheckbookContract.TAG.TABLE_NAME
+                + "." + CheckbookContract.TAG.UUID
+                + ") ";
+        rawQuery += " WHERE "
+                + CheckbookContract.ENTRY.TABLE_NAME + '.' + CheckbookContract.ENTRY.UUID
+                + " = '" + uuid + "'";
+        Cursor tagList = db.rawQuery(rawQuery, null);
+        tagList.moveToFirst();
+        List<String> tags = new ArrayList<>();
+        while(!tagList.isAfterLast()) {
+            tags.add(tagList.getString(0));
+            tagList.moveToNext();
+        }
+        tagList.close();
+
+        return new DbEntry(db, UUID.fromString(uuid), date, cost, tags, note);
+    }
+
     private void createEntryTagRelationship(UUID entryUUID, UUID tagUUID) {
         ContentValues tagValues = new ContentValues();
         tagValues.put(CheckbookContract.ENTRY_TO_TAG.ENTRY_UUID_COLUMN_NAME, entryUUID.toString());

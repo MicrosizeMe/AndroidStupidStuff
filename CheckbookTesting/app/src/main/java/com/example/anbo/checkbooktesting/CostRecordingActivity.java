@@ -1,8 +1,11 @@
 package com.example.anbo.checkbooktesting;
 
 import android.app.DialogFragment;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,20 +16,48 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.anbo.checkbooktesting.activityPrototypes.StaticCheckbookActivity;
+import com.example.anbo.checkbooktesting.activityPrototypes.BaseCheckbookActivity;
+import com.example.anbo.checkbooktesting.checkbookInterface.Entry;
+import com.example.anbo.checkbooktesting.sqlDBInteractions.CheckbookService;
 import com.example.anbo.checkbooktesting.subcomponents.AddTagFragment;
 import com.example.anbo.checkbooktesting.subcomponents.DatePickerFragment;
+import com.example.anbo.checkbooktesting.subcomponents.DeletionConfirmationFragment;
 import com.example.anbo.checkbooktesting.subcomponents.TagListAdapter;
 
 import java.util.Calendar;
 import java.util.List;
 
-public class CostRecordingActivity extends StaticCheckbookActivity
-implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagFragmentListener{
+public class CostRecordingActivity extends BaseCheckbookActivity
+implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagFragmentListener,
+DeletionConfirmationFragment.DeletionConfirmationReceiver{
 
     Calendar entryDateReading = StaticUtil.roundDate(Calendar.getInstance());
     TagListAdapter adapter;
     String uuid;
+
+    private CheckbookService checkbookService;
+    private boolean isBound = false;
+
+    private class CostRecordingServiceConnection implements ServiceConnection{
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            CheckbookService.CheckbookBinder binder = (CheckbookService.CheckbookBinder) service;
+            checkbookService = binder.getService();
+            if (uuid != null) {
+                //Todo get entry
+                Entry entry = checkbookService.getEntry(uuid);
+                populateFields(entry);
+            }
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isBound = false;
+        }
+    }
+
+    private CostRecordingServiceConnection connection = new CostRecordingServiceConnection();
 
     public static final String EDIT_FLAG = "com.example.CostRecordingActivity.isEditing";
 
@@ -72,12 +103,49 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
             deleteEntryButton.setText(R.string.cost_recording_activity_delete_entry_button_text);
             deleteEntryButton.setLayoutParams(new LinearLayout.LayoutParams(
                     0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f));
+            deleteEntryButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DialogFragment fragment = new DeletionConfirmationFragment();
+                    fragment.show(getFragmentManager(), "deleteFragment");
+                }
+            });
             Button editEntryButton = new Button(this);
             editEntryButton.setText(R.string.cost_recording_activity_edit_entry_button_text);
             editEntryButton.setLayoutParams(new LinearLayout.LayoutParams(
                     0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f));
+            editEntryButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    editEntry(v);
+                }
+            });
+
+
             buttonSpace.addView(deleteEntryButton);
             buttonSpace.addView(editEntryButton);
+            //Todo get info
+
+            //Entry entry;
+            //populateFields(entry);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!isBound) {
+            Intent intent = new Intent(this, CheckbookService.class);
+            bindService(intent, connection, BIND_AUTO_CREATE);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (isBound) {
+            unbindService(connection);
+            isBound = false;
         }
     }
 
@@ -86,6 +154,15 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_cost_recording, menu);
         return true;
+    }
+
+    private void populateFields(Entry data){
+        ((EditText) findViewById(R.id.cost_recording_activity_cost_edit_view))
+                .setText(StaticUtil.parseDouble(data.getCost()));
+        if (data.getNote() != null)
+            ((EditText) findViewById(R.id.cost_recording_screen_note_edit_view))
+                    .setText(data.getNote());
+        adapter.addAll(data.getTags());
     }
 
     private UserInputDataPacket readUserInfo(){
@@ -133,7 +210,7 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
         UserInputDataPacket packet = readUserInfo();
         if (packet == null) return;
 
-        serviceManager.service.createEntry(
+        checkbookService.createEntry(
                 entryDateReading, packet.cost, packet.tagList, packet.note);
         Toast toast = Toast.makeText(this, "Entry created!", Toast.LENGTH_SHORT);
         toast.show();
@@ -144,13 +221,14 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
         UserInputDataPacket packet = readUserInfo();
         if (packet == null) return;
 
+        //TODO finish this
         Toast toast = Toast.makeText(this, "TestText" + uuid, Toast.LENGTH_LONG);
         toast.show();
     }
 
     @Override
     public String[] getTagStrings() {
-        return serviceManager.service.getTagList();
+        return checkbookService.getTagList();
     }
 
     @Override
@@ -179,6 +257,14 @@ implements DatePickerFragment.DatePickerDialogueListener, AddTagFragment.AddTagF
         entryDateReading.set(Calendar.MONTH, month);
         entryDateReading.set(Calendar.DAY_OF_MONTH, day);
         setDateText(entryDateReading);
+    }
+
+    @Override
+    public void onDeletionConfirm() {
+        checkbookService.deleteEntry(uuid);
+        Toast toast = Toast.makeText(this, "Entry deleted. You monster.", Toast.LENGTH_LONG);
+        toast.show();
+        finish();
     }
 
     public void resetFields(){
